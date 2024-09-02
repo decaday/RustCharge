@@ -565,6 +565,7 @@ dependencies = [
  "embedded-graphics 0.8.1",
  "embedded-graphics-simulator",
  "embedded-text",
+ "profont",
 ]
 
 [[package]]
@@ -598,6 +599,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "profont"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "016681370a9dd6e7ddb4c1a959922fd59dc45e5ebaa5ff5b13090267898ced34"
+dependencies = [
+ "embedded-graphics 0.8.1",
 ]
 
 [[package]]

@@ -11,71 +11,31 @@ use embedded_graphics::{
     },
     text::{Alignment, Text},
 };
-use embedded_graphics_simulator::{
-    BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
-};
 
 use power_bank::screen::{ScreenType, Screen};
+
+use power_bank::{Data, PortData, PortState};
 
 fn main() -> Result<(), std::convert::Infallible> {
     // Create a new simulator display with 128x64 pixels.
     let mut screen = Screen::new();
-
     
-    // Create styles used by the drawing operations.
-    let thin_stroke = PrimitiveStyle::with_stroke(BinaryColor::On, 1);
-    let thick_stroke = PrimitiveStyle::with_stroke(BinaryColor::On, 3);
-    let border_stroke = PrimitiveStyleBuilder::new()
-        .stroke_color(BinaryColor::On)
-        .stroke_width(3)
-        .stroke_alignment(StrokeAlignment::Inside)
-        .build();
-    let fill = PrimitiveStyle::with_fill(BinaryColor::On);
-    let character_style = MonoTextStyle::new(&FONT_6X10, BinaryColor::On);
-
-    let yoffset = 14;
-
-    // Draw a 3px wide outline around the display.
-    screen.display
-        .bounding_box()
-        .into_styled(border_stroke)
-        .draw(&mut screen.display)?;
+    let port_data = PortData {
+        state: PortState::Unuse,
+        data: 0,
+    };
+    let data = Data {
+        battery_percentage: 52,
+        battery_voltage_mills_data: 3512,
+        powerbank_current_ma: port_data.clone(),
+        led_current_ma: port_data.clone(),
+        output1_voltage_mills_data: port_data.clone(),
+        output2_voltage_mills_data: port_data.clone(),
+    };
 
     screen.draw_screen(ScreenType::StandBy);
+    screen.update_screen(data);
     screen.show_static();
-
-    // // Draw a triangle.
-    // Triangle::new(
-    //     Point::new(16, 16 + yoffset),
-    //     Point::new(16 + 16, 16 + yoffset),
-    //     Point::new(16 + 8, yoffset),
-    // )
-    // .into_styled(thin_stroke)
-    // .draw(&mut display)?;
-
-    // // Draw a filled square
-    // Rectangle::new(Point::new(52, yoffset), Size::new(16, 16))
-    //     .into_styled(fill)
-    //     .draw(&mut display)?;
-
-    // // Draw a circle with a 3px wide stroke.
-    // Circle::new(Point::new(88, yoffset), 17)
-    //     .into_styled(thick_stroke)
-    //     .draw(&mut display)?;
-
-    // // Draw centered text.
-    // let text = "embedded-graphics";
-    // Text::with_alignment(
-    //     text,
-    //     display.bounding_box().center() + Point::new(0, 15),
-    //     character_style,
-    //     Alignment::Center,
-    // )
-    // .draw(&mut display)?;
-
-
-
-
 
     Ok(())
 }

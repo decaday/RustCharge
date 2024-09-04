@@ -21,7 +21,7 @@ impl<T: DrawTarget<Color=BinaryColor>> Screen<T> {
 
     pub(super) fn update_stand_by_screen(&mut self, data: &Data) {
         let clean_area = Rectangle::with_corners(Point::new(48, 0), Point::new(127, 31));
-        self.display.fill_solid(&clean_area, BinaryColor::Off);
+        let _ = self.display.fill_solid(&clean_area, BinaryColor::Off);
 
         let _ = Text::new(
             &data.get_battery_percentage_string() as _,

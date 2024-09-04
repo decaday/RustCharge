@@ -22,6 +22,7 @@ fn main() -> Result<(), std::convert::Infallible> {
     
     let port_data = PortData::Output(2455);
     let data = Data {
+        brightness_percentage: 30,
         battery_percentage: 52,
         battery_voltage_mv: 3512,
         powerbank_current_ma: port_data.clone(),
@@ -34,6 +35,9 @@ fn main() -> Result<(), std::convert::Infallible> {
     screen.update_screen(&data);
 
     screen.draw_screen(ScreenType::Working);
+    screen.update_screen(&data);
+
+    screen.draw_screen(ScreenType::LightAdjust);
     screen.update_screen(&data);
     screen.show_static();
 

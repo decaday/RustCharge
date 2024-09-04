@@ -14,6 +14,7 @@ pub struct Data {
     pub battery_voltage_mv: u32,
     pub powerbank_current_ma: PortData,
     pub light_current_ma: PortData,
+    pub brightness_percentage: u8,
     // pub output1_voltage_mills_data: PortData,
     // pub output2_voltage_mills_data: PortData,
 }
@@ -22,6 +23,11 @@ impl Data {
     pub fn get_battery_percentage_string(&self) -> String {
         let battery_percentage = self.battery_percentage;
         format!("{battery_percentage}%")
+    }
+
+    pub fn get_brightness_percentage_string(&self) -> String {
+        let brightness_percentage = self.brightness_percentage;
+        format!("{brightness_percentage}%")
     }
 
     pub fn get_battery_voltage_string(&self) -> String {

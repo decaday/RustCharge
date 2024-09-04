@@ -4,7 +4,7 @@ use embedded_graphics::{
     prelude::*,
     text::{Alignment, Text},
 };
-use profont::{PROFONT_24_POINT, PROFONT_18_POINT, PROFONT_12_POINT};
+use profont::*;
 use embedded_graphics_simulator::{
     BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
 };
@@ -17,6 +17,9 @@ pub use standby_screen::*;
 pub mod working_screen;
 pub use working_screen::*;
 
+pub mod light_adjust_screen;
+pub use light_adjust_screen::*;
+
 // 1 pixel = 0.75 point
 // 16x29 pixels (19)
 static PROFONT_24POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_24_POINT, BinaryColor::On);
@@ -24,13 +27,20 @@ static PROFONT_24POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::ne
 // 12x22 pixels
 static PROFONT_18POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_18_POINT, BinaryColor::On);
 
+static PROFONT_14POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_14_POINT, BinaryColor::On);
+
 // (9)
 static PROFONT_12POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_12_POINT, BinaryColor::On);
+
+static PROFONT_10POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_10_POINT, BinaryColor::On);
+
+static PROFONT_9POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_9_POINT, BinaryColor::On);
 
 
 pub enum ScreenType {
     StandBy,
     Working,
+    LightAdjust,
     None,
 }
 
@@ -61,6 +71,10 @@ impl<T: DrawTarget<Color=BinaryColor>> Screen<T> {
                 self.draw_working_screen();
                 self.current_type = ScreenType::Working;
             },
+            ScreenType::LightAdjust => {
+                self.draw_light_adjust_screen();
+                self.current_type = ScreenType::LightAdjust;
+            },
             ScreenType::None => todo!(),
         }
     }
@@ -69,10 +83,13 @@ impl<T: DrawTarget<Color=BinaryColor>> Screen<T> {
         match self.current_type {
             ScreenType::StandBy => {
                 self.update_stand_by_screen(&data);
-            }
+            },
             ScreenType::Working => {
                 self.update_working_screen(&data);
-        },
+            },
+            ScreenType::LightAdjust => {
+                self.update_light_adjust_screen(&data);
+            },
             ScreenType::None => todo!(),
         }
     }
@@ -92,6 +109,6 @@ impl Screen<SimulatorDisplay<BinaryColor>> {
         let output_settings = OutputSettingsBuilder::new()
             .theme(BinaryColorTheme::OledWhite)
             .build();
-        Window::new("Hello World", &output_settings).show_static(&self.display);
+        Window::new("RUST POWER BANK", &output_settings).show_static(&self.display);
     }
 }

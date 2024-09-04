@@ -1,25 +1,21 @@
+use embedded_text::style;
+
 pub mod screen;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum PortState {
+pub enum PortData {
     Unuse,
-    Input,
-    Output,
-}
-
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub struct PortData {
-    pub state: PortState,
-    pub data: u32,
+    Input(u32),
+    Output(u32),
 }
 
 pub struct Data {
     pub battery_percentage: u8,
-    pub battery_voltage_mills_data: u32,
+    pub battery_voltage_mv: u32,
     pub powerbank_current_ma: PortData,
-    pub led_current_ma: PortData,
-    pub output1_voltage_mills_data: PortData,
-    pub output2_voltage_mills_data: PortData,
+    pub light_current_ma: PortData,
+    // pub output1_voltage_mills_data: PortData,
+    // pub output2_voltage_mills_data: PortData,
 }
 
 impl Data {
@@ -29,8 +25,75 @@ impl Data {
     }
 
     pub fn get_battery_voltage_string(&self) -> String {
-        let battery_voltage = self.battery_voltage_mills_data;
+        let battery_voltage = self.battery_voltage_mv;
         mills_to_string(battery_voltage, 'V')
+    }
+
+    pub fn get_powerbank_power_string(&self, input_prefix: Option<&str>, output_prefix: Option<&str>) -> Option<String> {
+        self.powerbank_current_ma.get_power_string(self.battery_voltage_mv, input_prefix, output_prefix)
+    }
+
+    pub fn get_powerbank_current_string(&self, input_prefix: Option<&str>, output_prefix: Option<&str>) -> Option<String> {
+        self.powerbank_current_ma.get_string(input_prefix, output_prefix)
+    }
+
+    pub fn get_light_power_string(&self, input_prefix: Option<&str>, output_prefix: Option<&str>) -> Option<String> {
+        self.light_current_ma.get_power_string(self.battery_voltage_mv, input_prefix, output_prefix)
+    }
+
+    pub fn get_light_current_string(&self, input_prefix: Option<&str>, output_prefix: Option<&str>) -> Option<String> {
+        self.light_current_ma.get_string(input_prefix, output_prefix)
+    }
+}
+
+impl PortData {
+    pub fn get_string(&self, input_prefix: Option<&str>, output_prefix: Option<&str>) -> Option<String> {
+        match *self {
+            PortData::Input(data) => {
+                let string = mills_to_string(data, 'V');
+                if let Some(prefix) = input_prefix {
+                    Some(format!("{prefix}{string}"))
+                }
+                else {
+                    Some(string) 
+                }
+            },
+            PortData::Output(data) => {
+                let string = mills_to_string(data, 'V');
+                if let Some(prefix) = output_prefix {
+                    Some(format!("{prefix}{string}"))
+                }
+                else {
+                    Some(string) 
+                }
+            },
+            PortData::Unuse => None,
+        }
+    }
+
+    pub(crate) fn get_power_string(&self, mill_voltage_or_current: u32, input_prefix: Option<&str>, output_prefix: Option<&str>) -> Option<String> {        
+        match *self {
+            PortData::Input(data) => {
+                let string = mills_to_power_string(data, mill_voltage_or_current);
+
+                if let Some(prefix) = input_prefix {
+                    Some(format!("{prefix}{string}"))
+                }
+                else {
+                    Some(string) 
+                }
+            },
+            PortData::Output(data) => {
+                let string = mills_to_power_string(data, mill_voltage_or_current);
+                if let Some(prefix) = output_prefix {
+                    Some(format!("{prefix}{string}"))
+                }
+                else {
+                    Some(string) 
+                }
+            },
+            PortData::Unuse => None,
+        }
     }
 }
 
@@ -48,4 +111,9 @@ fn mills_to_string(mills_data: u32, unit: char) -> String {
     };
     
     result
+}
+
+fn mills_to_power_string(mill_voltage: u32, mill_current: u32) -> String {
+    let mill_power = mill_current * mill_voltage / 1000;
+    mills_to_string(mill_power, 'W')
 }

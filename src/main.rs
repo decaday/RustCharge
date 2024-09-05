@@ -11,14 +11,16 @@ use embedded_graphics::{
     },
     text::{Alignment, Text},
 };
-
-use power_bank::screen::{ScreenType, Screen};
+use embedded_graphics_simulator::{
+    BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
+};
+use power_bank::screen::*;
 
 use power_bank::{Data, PortData};
 
 fn main() -> Result<(), std::convert::Infallible> {
     // Create a new simulator display with 128x64 pixels.
-    let mut screen = Screen::new();
+    let mut screen = SimulatorInitScreen::new();
     
     let port_data = PortData::Output(2455);
     let data = Data {
@@ -31,15 +33,14 @@ fn main() -> Result<(), std::convert::Infallible> {
         // output2_voltage_mills_data: port_data.clone(),
     };
 
-    screen.draw_screen(ScreenType::StandBy);
-    screen.update_screen(&data);
+    let mut screen = StandbyScreen::switch_into(screen);
+    screen.draw_base_widget();
+    screen.update(&data);
 
-    screen.draw_screen(ScreenType::Working);
-    screen.update_screen(&data);
-
-    screen.draw_screen(ScreenType::LightAdjust);
-    screen.update_screen(&data);
-    screen.show_static();
+    let output_settings = OutputSettingsBuilder::new()
+    .theme(BinaryColorTheme::OledWhite)
+    .build();
+    Window::new("RUST POWER BANK", &output_settings).show_static(&screen.get_display());
 
     Ok(())
 }

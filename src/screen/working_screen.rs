@@ -1,25 +1,20 @@
-use embedded_graphics::{
-    mono_font::{ascii::FONT_10X20, MonoTextStyle},
-    pixelcolor::BinaryColor,
-    prelude::*,
-    primitives::{
-        Circle, PrimitiveStyle, PrimitiveStyleBuilder, Rectangle, StrokeAlignment, Triangle,
-    },
-    text::{Alignment, Text},
-};
-use profont::{PROFONT_24_POINT, PROFONT_18_POINT};
-use embedded_graphics_simulator::{
-    BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
-};
+use crate::screen::*;
 
-use super::*;
+pub struct WorkingScreen {
+    display: SimulatorDisplay<BinaryColor>,
+}
 
-impl<T: DrawTarget<Color=BinaryColor>> Screen<T> {
-    pub(super) fn draw_working_screen(&mut self) {
+impl Screen for WorkingScreen {
 
+    fn switch_into(old_screen: impl Screen) -> Self {
+        let display = old_screen.get_display();
+        Self { display }
     }
 
-    pub(super) fn update_working_screen(&mut self, data: &Data) {
+    fn draw_base_widget(&mut self) {
+    }
+
+    fn update(&mut self, data: &Data) {
         let clean_area = self.display.bounding_box();
         let _ = self.display.fill_solid(&clean_area, BinaryColor::Off);
 
@@ -56,4 +51,7 @@ impl<T: DrawTarget<Color=BinaryColor>> Screen<T> {
         .draw(&mut self.display);
     }
 
+    fn get_display(self) -> SimulatorDisplay<BinaryColor> {
+        self.display
+    }
 }

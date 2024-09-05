@@ -2,6 +2,9 @@ use embedded_graphics::{
     mono_font::{ascii::FONT_10X20, MonoTextStyle},
     pixelcolor::BinaryColor,
     prelude::*,
+    primitives::{
+        Circle, PrimitiveStyle, PrimitiveStyleBuilder, Rectangle, StrokeAlignment, Triangle,
+    },
     text::{Alignment, Text},
 };
 use profont::*;
@@ -44,63 +47,41 @@ pub enum ScreenType {
     None,
 }
 
-pub struct Screen<T> {
-    pub current_type: ScreenType,
-    pub display: T,
+pub struct SimulatorInitScreen {
+    pub display: SimulatorDisplay<BinaryColor>,
 }
 
-// pub trait Screen {
-//     fn switch_into(old_screen: impl Screen) -> Self ;
+pub trait Screen {
+    fn switch_into(old_screen: impl Screen) -> Self;
 
-//     fn draw_base_widget(&mut self);
+    fn draw_base_widget(&mut self);
 
-//     fn update(&mut self, data: Data);
+    fn update(&mut self, data: &Data);
 
-//     fn get_display(&mut self) -> xxx;
-// }
+    fn get_display(self) -> SimulatorDisplay<BinaryColor>;
+}
 
-impl<T: DrawTarget<Color=BinaryColor>> Screen<T> {
-    pub fn draw_screen(&mut self, screen_type: ScreenType) {
-        let _ = self.display.clear(BinaryColor::Off);
-        match screen_type {
-            ScreenType::StandBy => {
-                self.draw_stand_by_screen();
-                self.current_type = ScreenType::StandBy;
-            },
-            ScreenType::Working => {
-                self.draw_working_screen();
-                self.current_type = ScreenType::Working;
-            },
-            ScreenType::LightAdjust => {
-                self.draw_light_adjust_screen();
-                self.current_type = ScreenType::LightAdjust;
-            },
-            ScreenType::None => todo!(),
-        }
+impl Screen for SimulatorInitScreen {
+
+    fn switch_into(old_screen: impl Screen) -> Self {
+        let display = old_screen.get_display();
+        Self { display }
     }
 
-    pub fn update_screen(&mut self, data: &Data){
-        match self.current_type {
-            ScreenType::StandBy => {
-                self.update_stand_by_screen(&data);
-            },
-            ScreenType::Working => {
-                self.update_working_screen(&data);
-            },
-            ScreenType::LightAdjust => {
-                self.update_light_adjust_screen(&data);
-            },
-            ScreenType::None => todo!(),
-        }
+    fn draw_base_widget(&mut self) {}
+
+    fn update(&mut self, data: &Data) {}
+
+    fn get_display(self) -> SimulatorDisplay<BinaryColor> {
+        self.display
     }
 }
 
 
-impl Screen<SimulatorDisplay<BinaryColor>> {
+impl SimulatorInitScreen {
     pub fn new() -> Self {
         Self{
             display: SimulatorDisplay::new(Size::new(128, 32)),
-            current_type: ScreenType::None,
         }
 
     }

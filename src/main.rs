@@ -40,7 +40,7 @@ async fn main(spawner: Spawner) {
     screen.draw_base_widget();
     screen.update(&data);
 
-    Timer::after(Duration::from_millis(5000)).await;
+    Timer::after(Duration::from_millis(5)).await;
     let output_settings = OutputSettingsBuilder::new()
         .theme(BinaryColorTheme::OledWhite)
         .build();

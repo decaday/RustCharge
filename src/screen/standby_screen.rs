@@ -15,6 +15,10 @@ impl Screen for StandbyScreen {
 
     fn draw_base_widget(&mut self) {
         let _ = self.display.clear(BinaryColor::Off);
+        
+        let bmp: Bmp<BinaryColor> = Bmp::from_slice(include_bytes!("../././assets/rust-battery.bmp")).unwrap();
+        let img = Image::new(&bmp, Point::new(0, 0));
+        let _ = img.draw(&mut self.display);
     }
 
     fn update(&mut self, data: &Data) {
@@ -23,15 +27,15 @@ impl Screen for StandbyScreen {
 
         let _ = Text::new(
             &data.get_battery_percentage_string() as _,
-            Point::new(48, 19),
+            Point::new(40, 19),
             PROFONT_24POINT_STYLE,
         )
         .draw(&mut self.display);
 
         let _ = Text::new(
             &data.get_battery_voltage_string() as _,
-            Point::new(48, 30),
-            PROFONT_18POINT_STYLE,
+            Point::new(40, 30),
+            PROFONT_12POINT_STYLE,
         )
         .draw(&mut self.display);
     }

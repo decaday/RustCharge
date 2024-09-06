@@ -5,9 +5,11 @@ use embedded_graphics::{
     primitives::{
         Circle, PrimitiveStyle, PrimitiveStyleBuilder, Rectangle, StrokeAlignment, Triangle,
     },
+    image::Image,
     text::{Alignment, Text},
 };
 use profont::*;
+use tinybmp::Bmp;
 use embedded_graphics_simulator::{
     BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
 };
@@ -70,7 +72,8 @@ impl Screen for SimulatorInitScreen {
 
     fn draw_base_widget(&mut self) {}
 
-    fn update(&mut self, data: &Data) {}
+    fn update(&mut self, data: &Data) {
+    }
 
     fn get_display(self) -> SimulatorDisplay<BinaryColor> {
         self.display

@@ -8,10 +8,13 @@ impl Screen for WorkingScreen {
 
     fn switch_into(old_screen: impl Screen) -> Self {
         let display = old_screen.get_display();
-        Self { display }
+        let mut screen = Self { display };
+        screen.draw_base_widget();
+        screen
     }
 
     fn draw_base_widget(&mut self) {
+        let _ = self.display.clear(BinaryColor::Off);
     }
 
     fn update(&mut self, data: &Data) {

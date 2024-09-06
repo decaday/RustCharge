@@ -1,7 +1,3 @@
-//! # Example: Hello world
-//!
-//! A simple hello world example displaying some primitive shapes and some text underneath.
-
 use embedded_graphics::{
     mono_font::{ascii::FONT_6X10, MonoTextStyle},
     pixelcolor::BinaryColor,
@@ -14,11 +10,18 @@ use embedded_graphics::{
 use embedded_graphics_simulator::{
     BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
 };
+
+use embassy_executor::Spawner;
+use embassy_time::{Duration, Instant, Timer};
+
 use power_bank::screen::*;
 
 use power_bank::{Data, PortData};
 
-fn main() -> Result<(), std::convert::Infallible> {
+
+// Main is itself an async task as well.
+#[embassy_executor::main]
+async fn main(spawner: Spawner) {
     // Create a new simulator display with 128x64 pixels.
     let mut screen = SimulatorInitScreen::new();
     
@@ -37,10 +40,36 @@ fn main() -> Result<(), std::convert::Infallible> {
     screen.draw_base_widget();
     screen.update(&data);
 
+    Timer::after(Duration::from_millis(5000)).await;
     let output_settings = OutputSettingsBuilder::new()
-    .theme(BinaryColorTheme::OledWhite)
-    .build();
+        .theme(BinaryColorTheme::OledWhite)
+        .build();
     Window::new("RUST POWER BANK", &output_settings).show_static(&screen.get_display());
 
-    Ok(())
+    // spawner.spawn(blink(p.P0_13.degrade())).unwrap();
+
+    loop {
+        // // Asynchronously wait for GPIO events, allowing other tasks
+        // // to run, or the core to sleep.
+        // button.wait_for_low().await;
+        // info!("Button pressed!");
+        // button.wait_for_high().await;
+        // info!("Button released!");
+    }
+}
+
+
+
+// Declare async tasks
+#[embassy_executor::task]
+async fn blink() {
+    // let mut led = Output::new(pin, Level::Low, OutputDrive::Standard);
+
+    // loop {
+    //     // Timekeeping is globally available, no need to mess with hardware timers.
+    //     led.set_high();
+    //     Timer::after_millis(150).await;
+    //     led.set_low();
+    //     Timer::after_millis(150).await;
+    // }
 }

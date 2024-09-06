@@ -8,10 +8,14 @@ impl Screen for LightAdjustScreen {
 
     fn switch_into(old_screen: impl Screen) -> Self {
         let display = old_screen.get_display();
-        Self { display }
+        let mut screen = Self { display };
+        screen.draw_base_widget();
+        screen
     }
 
     fn draw_base_widget(&mut self) {
+        let _ = self.display.clear(BinaryColor::Off);
+
         let border_stroke = PrimitiveStyleBuilder::new()
         .stroke_color(BinaryColor::On)
         .stroke_width(1)

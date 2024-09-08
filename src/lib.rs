@@ -1,6 +1,5 @@
-use embedded_text::style;
-
 pub mod screen;
+
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum PortData {
@@ -49,6 +48,26 @@ impl Data {
 
     pub fn get_light_current_string(&self, input_prefix: Option<&str>, output_prefix: Option<&str>) -> Option<String> {
         self.light_current_ma.get_string(input_prefix, output_prefix)
+    }
+
+    pub fn get_icons_list(&self) -> [screen::Icon; 3] {
+        // Initialize with empty icons
+        let mut icons = [screen::Icon::Unuse; 3]; 
+
+    
+        if let PortData::Input(_) = self.powerbank_current_ma {
+            icons[0] = screen::Icon::Charging;
+        }
+    
+        if let PortData::Output(current) = self.powerbank_current_ma {
+            if self.battery_voltage_mv * current / 100 < 5000 {
+                icons[1] = screen::Icon::Thunder;
+            } else {
+                icons[2] = screen::Icon::DoubleThunder;
+            }
+        }
+    
+        icons
     }
 }
 

@@ -16,6 +16,9 @@ use embedded_graphics_simulator::{
 
 use crate::*;
 
+pub mod icons;
+pub use icons::*;
+
 pub mod standby_screen;
 pub use standby_screen::*;
 

@@ -28,20 +28,20 @@ impl Screen for WorkingScreen {
         )
         .draw(&mut self.display);
 
-        if let Some(powerbank_power) = data.get_powerbank_power_string(Some("I:"), Some("O:")) {
+        if let Some(powerbank_power) = data.get_powerbank_power_string(Some("I"), Some("o")) {
             let _ = Text::new(
                 &powerbank_power as _,
                 Point::new(52, 8),
-                PROFONT_12POINT_STYLE,
+                PROFONT_10POINT_STYLE,
             )
             .draw(&mut self.display);
         }
 
-        if let Some(light_power) = data.get_light_power_string(None, Some("L:")) {
+        if let Some(light_power) = data.get_light_power_string(None, Some("L")) {
             let _ = Text::new(
                 &light_power as _,
                 Point::new(52, 19),
-                PROFONT_12POINT_STYLE,
+                PROFONT_10POINT_STYLE,
             )
             .draw(&mut self.display);
         }
@@ -49,9 +49,11 @@ impl Screen for WorkingScreen {
         let _ = Text::new(
             &data.get_battery_voltage_string() as _,
             Point::new(52, 30),
-            PROFONT_12POINT_STYLE,
+            PROFONT_10POINT_STYLE,
         )
         .draw(&mut self.display);
+
+        icons::draw_icons(&mut self.display, data.get_icons_list());
     }
 
     fn get_display(self) -> SimulatorDisplay<BinaryColor> {

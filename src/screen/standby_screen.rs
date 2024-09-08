@@ -38,6 +38,8 @@ impl Screen for StandbyScreen {
             PROFONT_12POINT_STYLE,
         )
         .draw(&mut self.display);
+
+        icons::draw_icons(&mut self.display, data.get_icons_list());
     }
 
     fn get_display(self) -> SimulatorDisplay<BinaryColor> {

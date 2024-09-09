@@ -37,7 +37,7 @@ async fn main(spawner: Spawner) {
     };
 
     // let mut screen = StandbyScreen::switch_into(screen);
-    let mut screen = WorkingScreen::switch_into(screen);
+    let mut screen = AboutScreen::switch_into(screen); //StandbyScreen::switch_into(screen);
 
     screen.draw_base_widget();
     screen.update(&data);

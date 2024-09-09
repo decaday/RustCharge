@@ -1,5 +1,5 @@
 use embedded_graphics::{
-    mono_font::{ascii::FONT_10X20, MonoTextStyle},
+    mono_font::{ascii::*, MonoTextStyle},
     pixelcolor::BinaryColor,
     prelude::*,
     primitives::{
@@ -28,6 +28,9 @@ pub use working_screen::*;
 pub mod light_adjust_screen;
 pub use light_adjust_screen::*;
 
+pub mod about_screen;
+pub use about_screen::*;
+
 // 1 pixel = 0.75 point
 // 16x29 pixels (19)
 static PROFONT_24POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_24_POINT, BinaryColor::On);
@@ -44,6 +47,11 @@ static PROFONT_10POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::ne
 
 static PROFONT_9POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_9_POINT, BinaryColor::On);
 
+static PROFONT_7POINT_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&PROFONT_7_POINT, BinaryColor::On);
+
+static MONOFONT_5X8_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&FONT_5X8, BinaryColor::On);
+
+static MONOFONT_4X6_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&FONT_4X6, BinaryColor::On);
 
 pub enum ScreenType {
     StandBy,

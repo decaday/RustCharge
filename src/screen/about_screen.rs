@@ -43,7 +43,7 @@ impl Screen for AboutScreen {
         let _ = img.draw(&mut self.display);
     }
 
-    fn update(&mut self, data: &Data) {
+    fn update(&mut self, _data: &Data) {
         
     }
 

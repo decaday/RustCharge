@@ -1,7 +1,7 @@
 use crate::screen::*;
 
 pub struct StandbyScreen {
-    display: SimulatorDisplay<BinaryColor>,
+    display: DisplayType,
 }
 
 impl Screen for StandbyScreen {
@@ -42,7 +42,7 @@ impl Screen for StandbyScreen {
         icons::draw_icons(&mut self.display, data.get_icons_list());
     }
 
-    fn get_display(self) -> SimulatorDisplay<BinaryColor> {
+    fn get_display(self) -> DisplayType<'static> {
         self.display
     }
 }

@@ -1,7 +1,7 @@
 use crate::screen::*;
 
 pub struct LightAdjustScreen {
-    display: SimulatorDisplay<BinaryColor>,
+    display: DisplayType,
 }
 
 impl Screen for LightAdjustScreen {
@@ -54,7 +54,7 @@ impl Screen for LightAdjustScreen {
         let _ = self.display.fill_solid(&fill_area, BinaryColor::On);
     }
 
-    fn get_display(self) -> SimulatorDisplay<BinaryColor> {
+    fn get_display(self) -> DisplayType {
         self.display
     }
 }

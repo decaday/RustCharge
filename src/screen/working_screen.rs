@@ -1,10 +1,10 @@
 use crate::screen::*;
 
-pub struct WorkingScreen {
-    display: SimulatorDisplay<BinaryColor>,
+pub struct WorkingScreen<'a> {
+    display: DisplayType<'a>,
 }
 
-impl Screen for WorkingScreen {
+impl<'a> Screen for WorkingScreen<'a> {
 
     fn switch_into(old_screen: impl Screen) -> Self {
         let display = old_screen.get_display();
@@ -56,7 +56,7 @@ impl Screen for WorkingScreen {
         icons::draw_icons(&mut self.display, data.get_icons_list());
     }
 
-    fn get_display(self) -> SimulatorDisplay<BinaryColor> {
+    fn get_display(self) -> DisplayType<'a> {
         self.display
     }
 }

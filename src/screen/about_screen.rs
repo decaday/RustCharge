@@ -1,7 +1,7 @@
 use crate::screen::*;
 
 pub struct AboutScreen {
-    display: SimulatorDisplay<BinaryColor>,
+    display: DisplayType,
 }
 
 impl Screen for AboutScreen {
@@ -47,7 +47,7 @@ impl Screen for AboutScreen {
         
     }
 
-    fn get_display(self) -> SimulatorDisplay<BinaryColor> {
+    fn get_display(self) -> DisplayType {
         self.display
     }
 }

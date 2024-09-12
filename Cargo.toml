@@ -5,20 +5,22 @@ edition = "2021"
 
 [dependencies]
 embedded-graphics = "0.8.1"
-chrono = "0.4.19"
+# chrono = "0.4.19"
 embedded-text = "0.5.0"
 profont = "0.7.0"
 tinybmp = "0.6.0"
 
-embedded-graphics-simulator = { version = "0.6.0" , optional = true}
+ssd1306 = { version = "0.9.0", optional = true}
+# embedded-graphics-simulator = { version = "0.6.0" , optional = true}
 
-embassy-executor = { version = "0.6.0", features = ["executor-thread", "integrated-timers"]  , optional = true}
-embassy-time = { version = "0.3.2", optional = true}
+embassy-executor = { path = "../../embassy/embassy-executor", features = ["executor-thread", "integrated-timers"]  , optional = true}
+embassy-time = { path = "../../embassy/embassy-time", optional = true}
 
 cortex-m-semihosting = { version = "0.5"  , optional = true}
 cortex-m = { version = "0.7", features = ["critical-section-single-core"] , optional = true}
 cortex-m-rt = { version = "0.7", optional = true}
 panic-probe = { version = "0.3", features = ["print-defmt"] , optional = true}
+heapless = { version = "0.7",features = ["defmt-03"], optional = true }
 
 defmt-rtt = { version = "0.4", optional = true}
 defmt = { version = "0.3", optional = true }
@@ -27,16 +29,16 @@ embedded-hal = { version = "1.0.0-alpha11" , optional = true }
 embedded-hal-async =  { version = "1.0" , optional = true }
 embedded-io =  { version = "0.6" , optional = true }
 
+# py32-bind-hal = { version = "0.5", path = "../../../2-bind-hal/bind-hal" , optional = true }
+embassy-stm32 = { path = "../../embassy/embassy-stm32", features = [ "defmt", "memory-x", "stm32f091rc", "time-driver-any", "exti", "unstable-pac"] , optional = true }
 
-
-py32-bind-hal = { version = "0.5", path = "../../../2-bind-hal/bind-hal" , optional = true }
 
 
 [features]
-default = ["device-simulator"]
+default = ["device-stm32"]
 
 device-simulator = [
-    "embedded-graphics-simulator",
+    #"embedded-graphics-simulator",
     "embassy-executor/task-arena-size-32768",
     "embassy-executor/arch-std",
     "embassy-executor/log",
@@ -51,16 +53,22 @@ device-arm = [
     "cortex-m-rt",
     "cortex-m-semihosting",
     "panic-probe",
+    "heapless",
     "defmt-rtt",
     "defmt",
     "embedded-io",
     "embedded-hal",
     "embedded-hal-async",
+    "ssd1306",
+
 ]
 
 device-py32 = [
     "device-arm", 
-    "py32-bind-hal",
+    #"py32-bind-hal",
 ]
 
-
+device-stm32 = [
+    "device-arm",
+    "embassy-stm32",
+]

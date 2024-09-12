@@ -1,3 +1,8 @@
+#![no_std]
+#![no_main]
+use {defmt_rtt as _, panic_probe as _};
+use defmt::*;
+
 use embedded_graphics::{
     mono_font::{ascii::FONT_6X10, MonoTextStyle},
     pixelcolor::BinaryColor,
@@ -7,6 +12,8 @@ use embedded_graphics::{
     },
     text::{Alignment, Text},
 };
+
+#[cfg(feature = "device-simulator")]
 use embedded_graphics_simulator::{
     BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
 };
@@ -15,11 +22,39 @@ use embassy_executor::Spawner;
 use embassy_time::{Duration, Instant, Timer};
 
 use power_bank::screen::*;
-
+use power_bank::display;
+use power_bank::monitor;
 use power_bank::{Data, PortData};
 
 
+bind_interrupts!(struct Irqs {
+    ADC1_2 => adc::InterruptHandler<ADC1>;
+});
+
+#[embassy_executor::main]
+async fn main(_spawner: Spawner) {
+    use embassy_stm32::i2c::{Error, I2c};
+    use embassy_stm32::adc::{Adc, Config, SampleTime};
+    use embassy_stm32::time::Hertz;
+    info!("Hello world!");
+    let p = embassy_stm32::init(Default::default());
+    let pin = p.PC0;
+
+    let i2c = I2c::new_blocking(p.I2C1, p.PA12, p.PB8, Hertz(400_000), Default::default());
+    let mut display = display::init(i2c).unwrap();
+
+    let adc = Adc::new(p.ADC1, Irqs);
+
+    let mut vrefint = adc.enable_vref();
+    
+    monitor::init(adc, p.PA0, p.PA1, p.PA2);
+
+
+    let vrefint_sample = adc.read(&mut vrefint).await;
+}
+
 // Main is itself an async task as well.
+#[cfg(feature = "device-simulator")]
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
     // Create a new simulator display with 128x64 pixels.

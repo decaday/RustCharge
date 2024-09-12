@@ -10,9 +10,14 @@ use embedded_graphics::{
 };
 use profont::*;
 use tinybmp::Bmp;
+
+#[cfg(feature = "device-simulator")]
 use embedded_graphics_simulator::{
     BinaryColorTheme, OutputSettingsBuilder, SimulatorDisplay, Window,
 };
+#[cfg(feature = "device-arm")]
+
+use crate::display::DisplayType;
 
 use crate::*;
 
@@ -53,6 +58,7 @@ static MONOFONT_5X8_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&
 
 static MONOFONT_4X6_STYLE: MonoTextStyle<'_, BinaryColor> = MonoTextStyle::new(&FONT_4X6, BinaryColor::On);
 
+
 pub enum ScreenType {
     StandBy,
     Working,
@@ -61,7 +67,7 @@ pub enum ScreenType {
 }
 
 pub struct SimulatorInitScreen {
-    pub display: SimulatorDisplay<BinaryColor>,
+    pub display: DisplayType,
 }
 
 pub trait Screen {
@@ -71,7 +77,7 @@ pub trait Screen {
 
     fn update(&mut self, data: &Data);
 
-    fn get_display(self) -> SimulatorDisplay<BinaryColor>;
+    fn get_display(self) -> DisplayType;
 }
 
 impl Screen for SimulatorInitScreen {
@@ -86,12 +92,12 @@ impl Screen for SimulatorInitScreen {
     fn update(&mut self, data: &Data) {
     }
 
-    fn get_display(self) -> SimulatorDisplay<BinaryColor> {
+    fn get_display(self) -> DisplayType {
         self.display
     }
 }
 
-
+#[cfg(feature = "device-simulator")]
 impl SimulatorInitScreen {
     pub fn new() -> Self {
         Self{

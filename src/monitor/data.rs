@@ -17,6 +17,20 @@ pub struct Data {
     // pub output2_voltage_mills_data: PortData,
 }
 
+impl Default for Data {
+    fn default() -> Self {
+        Self {
+            battery_percentage: 0,
+            battery_voltage_mv: 0,
+            powerbank_current_ma: PortData::Unuse,
+            light_current_ma: PortData::Unuse,
+            brightness_percentage: 0,
+            // output1_voltage_mills_data: PortData::Unuse,
+            // output2_voltage_mills_data: PortData::Unuse,
+        }
+    }
+}
+
 impl Data {
     pub fn get_battery_percentage_string(&self) -> String {
         let battery_percentage = self.battery_percentage;
@@ -117,6 +131,17 @@ impl PortData {
                 }
             },
             PortData::Unuse => None,
+        }
+    }
+
+    pub fn new(data: i32, critical_value: u32) -> Self {
+        if data < critical_value as i32 {
+            PortData::Input(data as u32)
+        } data > critical_value as i32 {
+            PortData::Output(data as u32)
+        }
+        else {
+            PortData::Unuse
         }
     }
 }

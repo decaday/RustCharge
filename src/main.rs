@@ -27,9 +27,9 @@ use power_bank::monitor;
 use power_bank::{Data, PortData};
 
 
-bind_interrupts!(struct Irqs {
-    ADC1_2 => adc::InterruptHandler<ADC1>;
-});
+// bind_interrupts!(struct Irqs {
+//     ADC1_2 => adc::InterruptHandler<ADC1>;
+// });
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
@@ -43,14 +43,11 @@ async fn main(_spawner: Spawner) {
     let i2c = I2c::new_blocking(p.I2C1, p.PA12, p.PB8, Hertz(400_000), Default::default());
     let mut display = display::init(i2c).unwrap();
 
-    let adc = Adc::new(p.ADC1, Irqs);
+    let mut adc = Adc::new(p.ADC1);
 
     let mut vrefint = adc.enable_vref();
     
-    monitor::init(adc, p.PA0, p.PA1, p.PA2);
-
-
-    let vrefint_sample = adc.read(&mut vrefint).await;
+    monitor::init(adc, p.PA0, p.PA1, p.PA2, vrefint);
 }
 
 // Main is itself an async task as well.

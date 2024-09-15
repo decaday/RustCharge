@@ -1,3 +1,5 @@
+use core::fmt::Write;
+
 use super::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -13,6 +15,9 @@ pub struct Data {
     pub powerbank_current_ma: PortData,
     pub light_current_ma: PortData,
     pub brightness_percentage: u8,
+    pub input_level: bool,
+    pub output1_level: bool,
+    pub output2_level: bool,
     // pub output1_voltage_mills_data: PortData,
     // pub output2_voltage_mills_data: PortData,
 }
@@ -25,6 +30,9 @@ impl Default for Data {
             powerbank_current_ma: PortData::Unuse,
             light_current_ma: PortData::Unuse,
             brightness_percentage: 0,
+            input_level: false,
+            output1_level: false,
+            output2_level: false,
             // output1_voltage_mills_data: PortData::Unuse,
             // output2_voltage_mills_data: PortData::Unuse,
         }
@@ -34,12 +42,16 @@ impl Default for Data {
 impl Data {
     pub fn get_battery_percentage_string(&self) -> String {
         let battery_percentage = self.battery_percentage;
-        format!("{battery_percentage}%")
+        let mut buf = String::new();
+        write!(&mut buf, "{battery_percentage}%").unwrap();
+        buf
     }
 
     pub fn get_brightness_percentage_string(&self) -> String {
         let brightness_percentage = self.brightness_percentage;
-        format!("{brightness_percentage}%")
+        let mut buf = String::new();
+        write!(&mut buf, "{brightness_percentage}%").unwrap();
+        buf
     }
 
     pub fn get_battery_voltage_string(&self) -> String {
@@ -90,7 +102,9 @@ impl PortData {
             PortData::Input(data) => {
                 let string = mills_to_string(data, 'V');
                 if let Some(prefix) = input_prefix {
-                    Some(format!("{prefix}{string}"))
+                    let mut buf = String::new();
+                    write!(&mut buf, "{prefix}{string}%").unwrap();
+                    Some(buf)
                 }
                 else {
                     Some(string) 
@@ -99,7 +113,9 @@ impl PortData {
             PortData::Output(data) => {
                 let string = mills_to_string(data, 'V');
                 if let Some(prefix) = output_prefix {
-                    Some(format!("{prefix}{string}"))
+                    let mut buf = String::new();
+                    write!(&mut buf, "{prefix}{string}%").unwrap();
+                    Some(buf)
                 }
                 else {
                     Some(string) 
@@ -115,7 +131,9 @@ impl PortData {
                 let string = mills_to_power_string(data, mill_voltage_or_current);
 
                 if let Some(prefix) = input_prefix {
-                    Some(format!("{prefix}{string}"))
+                    let mut buf = String::new();
+                    write!(&mut buf, "{prefix}{string}%").unwrap();
+                    Some(buf)
                 }
                 else {
                     Some(string) 
@@ -124,7 +142,9 @@ impl PortData {
             PortData::Output(data) => {
                 let string = mills_to_power_string(data, mill_voltage_or_current);
                 if let Some(prefix) = output_prefix {
-                    Some(format!("{prefix}{string}"))
+                    let mut buf = String::new();
+                    write!(&mut buf, "{prefix}{string}%").unwrap();
+                    Some(buf)
                 }
                 else {
                     Some(string) 
@@ -137,10 +157,9 @@ impl PortData {
     pub fn new(data: i32, critical_value: u32) -> Self {
         if data < critical_value as i32 {
             PortData::Input(data as u32)
-        } data > critical_value as i32 {
+        } else if data > critical_value as i32 {
             PortData::Output(data as u32)
-        }
-        else {
+        } else {
             PortData::Unuse
         }
     }
@@ -151,12 +170,15 @@ fn mills_to_string(mills_data: u32, unit: char) -> String {
     let mills_data_remainder = mills_data % 1000;
     
     let result = if mills_data_remainder == 0 {
-        format!("{data}.00{unit}")
+        let mut buf = String::new();
+        write!(&mut buf, "{data}.00{unit}%").unwrap();
+        buf
     } else {
         let mills_data_hundredths = mills_data_remainder / 100;
         let mills_data_remainder = (mills_data_remainder - mills_data_hundredths * 100) / 10;
-    
-        format!("{data}.{mills_data_hundredths}{mills_data_remainder}{unit}")
+        let mut buf = String::new();
+        write!(&mut buf, "{data}.{mills_data_hundredths}{mills_data_remainder}{unit}").unwrap();
+        buf
     };
     
     result
